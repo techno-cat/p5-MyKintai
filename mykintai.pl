@@ -25,47 +25,10 @@ plugin 'PODRenderer';
 get '/' => sub {
     my $self = shift;
 
-    my $teng = create_dbi();
     my $today = get_today();
 
     # 今月の出退勤で初期化
-    my @kintai_source = ();
-    {
-        my @kintai_data = create_kintai_data( $today->{year}, $today->{mon} );
-        my $ite = $teng->search(
-              kintai => {
-                year => $today->{year},
-                mon  => $today->{mon}
-            }
-        );
-        while ( my $row = $ite->next ) {
-            my $data = $row->get_columns();
-            $kintai_data[$data->{day}] = $data;
-        }
-
-        # 表示用の文字列を格納
-        foreach my $data ( @kintai_data ) {
-            my $src = {
-                year        => $data->{year},
-                mon         => $data->{mon},
-                day         => $data->{day},
-                label_begin => '00:00',
-                label_end   => '00:00'
-            };
-
-            if ( $data->{time_begin} != 0 ) {
-                my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_begin} );
-                $src->{label_begin} = sprintf( "%2d:%2d", $hour, $min );
-            }
-
-            if ( $data->{time_end} != 0 ) {
-                my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_end} );
-                $src->{label_end} = sprintf( "%2d:%2d", $hour, $min );
-            }
-
-            push @kintai_source, $src;
-        }
-    }
+    my @kintai_source = create_kintai_source( $today->{year}, $today->{mon} );
 
     $self->app->log->debug( "day = " . $today->{day} );
 
@@ -86,6 +49,49 @@ get '/end' => sub {
     update_kintai( 'time_end' );
     $self->redirect_to( '/' );
 };
+
+sub create_kintai_source {
+    my ( $year, $month ) = @_;
+    my @kintai_source = ();
+
+    my @kintai_data = create_kintai_data( $year, $month );
+    my $teng = create_dbi();
+    my $ite = $teng->search(
+          kintai => {
+            year => $year,
+            mon  => $month
+        }
+    );
+    while ( my $row = $ite->next ) {
+        my $data = $row->get_columns();
+        $kintai_data[$data->{day}] = $data;
+    }
+
+    # 表示用の文字列を格納
+    foreach my $data ( @kintai_data ) {
+        my $src = {
+            year        => $data->{year},
+            mon         => $data->{mon},
+            day         => $data->{day},
+            label_begin => '00:00',
+            label_end   => '00:00'
+        };
+
+        if ( $data->{time_begin} != 0 ) {
+            my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_begin} );
+            $src->{label_begin} = sprintf( "%2d:%2d", $hour, $min );
+        }
+
+        if ( $data->{time_end} != 0 ) {
+            my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_end} );
+            $src->{label_end} = sprintf( "%2d:%2d", $hour, $min );
+        }
+
+        push @kintai_source, $src;
+    }
+
+    return @kintai_source;
+}
 
 sub update_kintai {
     my $column = shift;
