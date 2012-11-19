@@ -270,9 +270,13 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+table tr {
+    margin: 0;
+    padding: 0;
+}
 table th {
     font-size: 0.8em;
-    padding: 2px 4px;
+    padding: 3px 4px 1px 4px;
     border: #999 solid;
     border-width: 1px;
     background: #ccc;
@@ -281,7 +285,7 @@ table th {
 }
 table td {
     font-size: 0.8em;
-    padding: 2px 4px;
+    padding: 3px 4px 1px 4px;
     border: 1px #999 solid;
     border-width: 1px;
     text-align: right;
