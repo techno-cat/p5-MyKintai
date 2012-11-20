@@ -30,10 +30,13 @@ get '/' => sub {
     # 今月の出退勤で初期化
     my @kintai_source = create_kintai_source( $today->{year}, $today->{mon} );
 
-    $self->app->log->debug( "day = " . $today->{day} );
+    $self->app->log->debug(
+        sprintf("Date: %4d/%2d/%2d", $today->{year}, $today->{mon}, $today->{day}) );
 
-    $self->stash( today => $today );
-    $self->stash( kintai_source => \@kintai_source );
+    $self->stash( today  => $today           );
+    $self->stash( year   => $today->{year}   );
+    $self->stash( month  => $today->{mon}    );
+    $self->stash( kintai => \@kintai_source  );
 
     $self->render( 'index' );
 };
@@ -70,8 +73,6 @@ sub create_kintai_source {
     # 表示用の文字列を格納
     foreach my $data ( @kintai_data ) {
         my $src = {
-            year        => $data->{year},
-            mon         => $data->{mon},
             day         => $data->{day},
             label_begin => '00:00',
             label_end   => '00:00'
@@ -165,8 +166,6 @@ sub create_kintai_data {
 
     # +{}を使う例
     return map +{
-            year       => $year,
-            mon        => $mon,
             day        => $_,
             time_begin => 0,
             time_end   => 0
@@ -229,7 +228,7 @@ __DATA__
       <th>月</th><th>日</th><th>出勤</th><th>退勤</th>
     </tr>
     <tr>
-% for my $src (@$kintai_source) {
+% for my $src (@$kintai) {
 %     # 先頭のダミーデータは無視
 %     if ( $src->{day} == 0 ) { next; }
 %     elsif ( $src->{day} == $today->{day} ) {
@@ -238,7 +237,7 @@ __DATA__
 %     else {
     <tr>
 %     }
-      <td><%= $src->{mon} %></td><td><%= $src->{day} %></td><td><%= $src->{label_begin} %></td><td><%= $src->{label_end} %></td>
+      <td><%= $month %></td><td><%= $src->{day} %></td><td><%= $src->{label_begin} %></td><td><%= $src->{label_end} %></td>
     </tr>
 % }
   </table>
