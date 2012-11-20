@@ -41,13 +41,13 @@ get '/' => sub {
     $self->render( 'index' );
 };
 
-get '/begin' => sub {
+get '/action/begin' => sub {
     my $self = shift;
     update_kintai( 'time_begin' );
     $self->redirect_to( '/' );
 };
 
-get '/end' => sub {
+get '/action/end' => sub {
     my $self = shift;
     update_kintai( 'time_end' );
     $self->redirect_to( '/' );

@@ -4,7 +4,7 @@
 <section>
   <h2><%= $today->{year} %>/<%= $today->{mon} %>/<%= $today->{day} %></h2>
   <p>
-    <a href="./begin">出社</a> | <a href="./end">退勤</a>
+    <a href="./action/begin">出社</a> | <a href="./action/end">退勤</a>
   </p>
 </section>
 <section>
