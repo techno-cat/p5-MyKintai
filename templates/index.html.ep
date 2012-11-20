@@ -1,9 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title><%= sprintf( "%4d/%02d", $year, $mon ); %></title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script><!--
+$(document).ready(function(){
+    $.ajax(
+        './api/list/<%= $year %>/<%= $mon %>',
+        {
+            dataType: 'json',
+            cache: false,
+            success: function(data, dataType) {
+                var kintai = data.kintai;
+                var elem = $( 'tbody' );
+                for (var i=0; i<kintai.length; i++) {
+                    elem.append(
+                        '<tr id="day_' + kintai[i].day.toString() + '">'
+                      + '<td>' + data.mon.toString() + '</td>'
+                      + '<td>' + kintai[i].day.toString() + '</td>'
+                      + '<td>' + kintai[i].label_begin + '</td>'
+                      + '<td>' + kintai[i].label_end   + '</td></tr>' );
+                }
+
+                console.log( elem );
+                if ( data.year === <%= $today->{year} %>
+                  && data.mon  === <%= $today->{mon} %> ) {
+                    $( '#day_<%= $today->{day} %>' ).addClass( 'today' );
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log( 'error status: ' + textStatus );
+            }
+        }
+    );
+});
+//--></script>
   </head>
   <body>
     <h1>Tengで作った勤怠管理システム</h1>
@@ -18,18 +51,6 @@
       <tr>
         <th>月</th><th>日</th><th>出勤</th><th>退勤</th>
       </tr>
-% for my $src (@$kintai) {
-%     if ( $year       == $today->{year}
-%      and $mon        == $today->{mon}
-%      and $src->{day} == $today->{day} ) {
-      <tr class="today">
-%     }
-%     else {
-      <tr>
-%     }
-        <td><%= $mon %></td><td><%= $src->{day} %></td><td><%= $src->{label_begin} %></td><td><%= $src->{label_end} %></td>
-      </tr>
-% }
     </table>
   </section>
   </body>
