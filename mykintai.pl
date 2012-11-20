@@ -275,56 +275,7 @@ __DATA__
   <head>
     <meta charset="utf-8">
     <title><%= title %></title>
-    <style type="text/css">
-<!--
-body, h1, h2, h3, h4, h5, h6, blockquote, p, form{
-    margin: 0;
-    padding: 0;
-}
-
-h1 {
-    font-size: 1.2em;
-    margin: 10px 20px;
-}
-
-section {
-    margin: 10px 20px;  
-}
-h2 {
-    font-size: 1.0em;
-}
-p {
-    font-size: 0.8em;
-}
-table {
-    border: 1px #999 solid;
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-table tr {
-    margin: 0;
-    padding: 0;
-}
-table th {
-    font-size: 0.8em;
-    padding: 3px 4px 1px 4px;
-    border: #999 solid;
-    border-width: 1px;
-    background: #ccc;
-    font-weight: bold;
-    text-align: center;
-}
-table td {
-    font-size: 0.8em;
-    padding: 3px 4px 1px 4px;
-    border: 1px #999 solid;
-    border-width: 1px;
-    text-align: right;
-}
-table tr.today td {
-    background-color: #fcc;
-}
-    </style>
+    <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
     <%= content %>
