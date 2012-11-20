@@ -236,48 +236,5 @@ sub get_today {
 }
 
 app->start;
-__DATA__
 
-@@ index.html.ep
-% layout 'default';
-% title sprintf( "%4d/%02d", $today->{year}, $today->{mon} );
-<h1>Tengで作った勤怠管理システム</h1>
-<section>
-  <h2><%= $today->{year} %>/<%= $today->{mon} %>/<%= $today->{day} %></h2>
-  <p>
-    <a href="./begin">出社</a> | <a href="./end">退勤</a>
-  </p>
-</section>
-<section>
-  <table>
-    <tr>
-      <th>月</th><th>日</th><th>出勤</th><th>退勤</th>
-    </tr>
-    <tr>
-% for my $src (@$kintai) {
-%     # 先頭のダミーデータは無視
-%     if ( $src->{day} == 0 ) { next; }
-%     elsif ( $src->{day} == $today->{day} ) {
-    <tr class="today">
-%     }
-%     else {
-    <tr>
-%     }
-      <td><%= $month %></td><td><%= $src->{day} %></td><td><%= $src->{label_begin} %></td><td><%= $src->{label_end} %></td>
-    </tr>
-% }
-  </table>
-</section>
-
-@@ layouts/default.html.ep
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="css/main.css">
-  </head>
-  <body>
-    <%= content %>
-  </body>
-</html>
+__END__
