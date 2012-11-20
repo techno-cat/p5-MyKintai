@@ -33,10 +33,11 @@ get '/:file' => { file => 'index.html' } => sub {
     $self->app->log->debug(
         sprintf("Date: %4d/%2d/%2d", $today->{year}, $today->{mon}, $today->{day}) );
 
-    $self->stash( today  => $today           );
-    $self->stash( year   => $today->{year}   );
-    $self->stash( month  => $today->{mon}    );
-    $self->stash( kintai => \@kintai_source  );
+    $self->stash( today  => $today          );
+    $self->stash( year   => $today->{year}  );
+    $self->stash( mon    => $today->{mon}   );
+    $self->stash( day    => $today->{day}   );
+    $self->stash( kintai => \@kintai_source );
 
     $self->render( 'index' );
 };
@@ -53,11 +54,11 @@ get '/action/end' => sub {
     $self->redirect_to( '/' );
 };
 
-get '/api/list/:year/:month' => sub {
+get '/api/list/:year/:mon' => sub {
     my $self = shift;
 
     my $YY = ( $self->param('year')  =~ /((\d){4})/ ) ? int($1) : undef;
-    my $MM = ( $self->param('month') =~ /((\d){2})/ ) ? int($1) : undef;
+    my $MM = ( $self->param('mon') =~ /((\d){2})/ ) ? int($1) : undef;
 
     # todo: 月が1〜12であることをチェックする
 
@@ -72,7 +73,7 @@ get '/api/list/:year/:month' => sub {
         $self->render(
             json => {
                 year    => $YY,
-                month   => $MM,
+                mon     => $MM,
                 kintai  => \@kintai_source
             }
         );
@@ -80,21 +81,24 @@ get '/api/list/:year/:month' => sub {
 };
 
 sub create_kintai_source {
-    my ( $year, $month ) = @_;
+    my ( $year, $mon ) = @_;
     my @kintai_source = ();
 
-    my @kintai_data = create_kintai_data( $year, $month );
+    my @kintai_data = create_kintai_data( $year, $mon );
     my $teng = create_dbi();
     my $ite = $teng->search(
           kintai => {
             year => $year,
-            mon  => $month
+            mon  => $mon
         }
     );
     while ( my $row = $ite->next ) {
         my $data = $row->get_columns();
         $kintai_data[$data->{day}] = $data;
     }
+
+    # 先頭のダミーデータを破棄
+    shift @kintai_data;
 
     # 表示用の文字列を格納
     foreach my $data ( @kintai_data ) {
