@@ -130,8 +130,7 @@ sub update_kintai {
     my $teng = create_dbi();
     my $today = get_today();
 
-#todo singleを使う
-    my $ite = $teng->search(
+    my $row = $teng->single(
         kintai => {
             year => $today->{year},
             mon  => $today->{mon},
@@ -139,7 +138,6 @@ sub update_kintai {
         }
     );
 
-    my $row = $ite->next;
     if ( $row ) {
         $row->update(
             { $column => $today->{raw} }
