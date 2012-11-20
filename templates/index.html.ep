@@ -18,7 +18,6 @@
       <tr>
         <th>月</th><th>日</th><th>出勤</th><th>退勤</th>
       </tr>
-      <tr>
 % for my $src (@$kintai) {
 %     if ( $year       == $today->{year}
 %      and $mon        == $today->{mon}
