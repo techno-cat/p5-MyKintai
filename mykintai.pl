@@ -22,7 +22,7 @@ use utf8;
 # Documentation browser under "/perldoc"
 plugin 'PODRenderer';
 
-get '/' => sub {
+get '/:file' => { file => 'index.html' } => sub {
     my $self = shift;
 
     my $today = get_today();
