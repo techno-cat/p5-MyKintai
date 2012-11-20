@@ -53,6 +53,32 @@ get '/end' => sub {
     $self->redirect_to( '/' );
 };
 
+get '/api/list/:year/:month' => sub {
+    my $self = shift;
+
+    my $YY = ( $self->param('year')  =~ /((\d){4})/ ) ? int($1) : undef;
+    my $MM = ( $self->param('month') =~ /((\d){2})/ ) ? int($1) : undef;
+
+    # todo: 月が1〜12であることをチェックする
+
+    if ( !$YY or !$MM ) {
+        $self->render(
+            json => { text => 'Oops.' },
+            status => 403
+        );
+    }
+    else {
+        my @kintai_source = create_kintai_source( $YY, $MM );
+        $self->render(
+            json => {
+                year    => $YY,
+                month   => $MM,
+                kintai  => \@kintai_source
+            }
+        );
+    }
+};
+
 sub create_kintai_source {
     my ( $year, $month ) = @_;
     my @kintai_source = ();
