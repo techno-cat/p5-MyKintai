@@ -79,12 +79,12 @@ sub create_kintai_source {
 
         if ( $data->{time_begin} != 0 ) {
             my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_begin} );
-            $src->{label_begin} = sprintf( "%2d:%2d", $hour, $min );
+            $src->{label_begin} = sprintf( "%02d:%02d", $hour, $min );
         }
 
         if ( $data->{time_end} != 0 ) {
             my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime( $data->{time_end} );
-            $src->{label_end} = sprintf( "%2d:%2d", $hour, $min );
+            $src->{label_end} = sprintf( "%02d:%02d", $hour, $min );
         }
 
         push @kintai_source, $src;
