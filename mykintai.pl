@@ -58,7 +58,7 @@ get '/api/list/:year/:mon' => sub {
     my $self = shift;
 
     my $YY = ( $self->param('year')  =~ /((\d){4})/ ) ? int($1) : undef;
-    my $MM = ( $self->param('mon') =~ /((\d){2})/ ) ? int($1) : undef;
+    my $MM = ( $self->param('mon')   =~ /((\d){2})/ ) ? int($1) : undef;
 
     # todo: 月が1〜12であることをチェックする
 
@@ -82,12 +82,20 @@ get '/api/list/:year/:mon' => sub {
 
 sub create_kintai_source {
     my ( $year, $mon ) = @_;
-    my @kintai_source = ();
+    my $cnt = calc_data_count( $year, $mon );
 
-    my @kintai_data = create_kintai_data( $year, $mon );
+    # 先頭にダミーデータが存在する、空の勤怠配列を作る
+    # +{}を使う例
+    my @kintai_data = map +{
+        day        => $_,
+        time_begin => 0,
+        time_end   => 0
+    }, 0..$cnt;
+
+    # 存在する勤怠データで初期化
     my $teng = create_dbi();
     my $ite = $teng->search(
-          kintai => {
+        kintai => {
             year => $year,
             mon  => $mon
         }
@@ -100,7 +108,8 @@ sub create_kintai_source {
     # 先頭のダミーデータを破棄
     shift @kintai_data;
 
-    # 表示用の文字列を格納
+    # 表示用の勤怠データ配列を生成
+    my @kintai_source = ();
     foreach my $data ( @kintai_data ) {
         my $src = {
             day         => $data->{day},
@@ -185,20 +194,6 @@ sub create_dbi {
     }
 
     return $teng;
-}
-
-# 先頭にダミーデータが存在する、空の勤怠配列を返す
-sub create_kintai_data {
-    my ( $year, $mon ) = @_;
-    my $cnt = calc_data_count( $year, $mon );
-
-    # +{}を使う例
-    return map +{
-            day        => $_,
-            time_begin => 0,
-            time_end   => 0
-    },
-    0..$cnt;
 }
 
 sub calc_data_count {
