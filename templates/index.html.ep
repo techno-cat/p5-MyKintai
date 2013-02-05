@@ -8,7 +8,7 @@
     <script><!--
 $(document).ready(function(){
     $.ajax(
-        './api/list/<%= $year %>/<%= $mon %>',
+        './api/list/<%= sprintf( "%4d/%02d", $year, $mon ); %>',
         {
             dataType: 'json',
             cache: false,
